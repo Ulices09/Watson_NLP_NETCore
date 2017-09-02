@@ -1,0 +1,178 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Watson_NLP</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>Prueba de Concepto</h1>
+            <button onclick="watson_STT();">Probar</button>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+               <h3>Speech To Text</h3>
+            </div>
+            <div id="divSpeechToText" class="col-xs-12">
+                
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+               <h3>Natural Languaje Understanding</h3>
+            </div>
+            <div id="divNaturalLanguageUnd" class="col-xs-12">
+                <div class="col-xs-12">
+                    <label>Keywords: </label><span id="nluKeywords"></span>
+                </div>
+                <div class="col-xs-12">
+                    <label>Entidades: </label><span id="nluEntities"></span>
+                </div>
+                <div class="col-xs-12">
+                    <label>Roles Semánticos: </label><span id="nluSemanticRoles"></span>
+                    <div id="divRolesSemanticos" class="col-xs-12">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="row">
+            <div class="col-xs-12">
+               <h3>Text to Speech</h3>
+            </div>
+            <div id="divTextToSpeech" class="col-xs-12">
+                <div id="divAudioOutputTTS" class="col-xs-12">
+                    <audio controls>
+                        <source src="../../resources/tts.flac" type="audio/flac">
+                    </audio>
+                </div>
+            </div>
+        </div>-->
+        
+    </div>
+
+    <script>
+
+        var textoTTS = "";
+
+        function watson_STT() {
+            $.ajax({
+                url: "/Home/ProcesarWatsonSTT",
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    for(var i = 0; i < res.length; i++) {
+                        $("#divSpeechToText").append("<div class='col-xs-12'><span>" + res[i] + "</span></div>");
+                    }
+
+                    textoTTS = res[0];
+                    watson_NLU(res);
+                }
+            });
+        }
+
+        function watson_NLU(data) {
+
+            $.ajax({
+                url: "/Home/ProcesarWatsonNLU",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    texto: data
+                },
+                success: function(res) {
+                    if(res.status == "Ok"){
+                        console.log(res.data);
+                        var entidades = res.data.entities;
+                        var roles_semanticos = res.data.semantic_roles;
+                        var keywords = res.data.keywords;
+
+                        if(entidades.length > 0){
+                            var textoEntidades = "";
+
+                            for(var i = 0; i < entidades.length; i++) {
+                                textoEntidades = textoEntidades + " / " +  entidades[i].text;
+                            }
+
+                            $("#nluEntities").text(textoEntidades);
+                        }
+
+                        if(roles_semanticos.length > 0){
+
+                            for(var i = 0; i < roles_semanticos.length; i++) {
+                                var sujeto = roles_semanticos[i].hasOwnProperty("subject") ? (roles_semanticos[i].subject.hasOwnProperty("text") ? roles_semanticos[i].subject.text : "") : "";
+                                var accion = roles_semanticos[i].hasOwnProperty("action") ? (roles_semanticos[i].action.hasOwnProperty("text") ? roles_semanticos[i].action.text : "") : "";
+                                var objeto = roles_semanticos[i].hasOwnProperty("object") ? (roles_semanticos[i].object.hasOwnProperty("text") ? roles_semanticos[i].object.text : "") : "";
+                                var num = i + 1;
+                                $("#divRolesSemanticos").append("<label>" + num +". Sujeto:</label><span>" + sujeto + "</span> <label>Acción:</label><span>" + accion + "</span> <label>Objeto:</label><span>" + objeto + "</span></br>");
+                            }
+                        }
+
+                        Watson_TTS();
+                        
+                    }
+                    else{
+                        console.log("No se ha podido procesar la información");
+                    }
+                }
+            });
+        }
+
+        function Watson_TTS(){
+            $.ajax({
+                url: "/Home/ProcesarWatsonTTS",
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    texto: textoTTS
+                },
+                success: function(res) {
+                    console.log(res);
+                }
+            });
+        }
+
+    </script>
+
+    <environment names="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <!--<script src="~/js/site.js" asp-append-version="true"></script>-->
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <!--<script src="~/js/site.min.js" asp-append-version="true"></script>-->
+    </environment>
+</body>
+</html>

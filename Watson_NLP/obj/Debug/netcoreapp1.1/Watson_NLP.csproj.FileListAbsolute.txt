@@ -1,0 +1,10 @@
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\bin\Debug\netcoreapp1.1\Watson_NLP.deps.json
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\bin\Debug\netcoreapp1.1\Watson_NLP.runtimeconfig.json
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\bin\Debug\netcoreapp1.1\Watson_NLP.runtimeconfig.dev.json
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\bin\Debug\netcoreapp1.1\Watson_NLP.dll
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\bin\Debug\netcoreapp1.1\Watson_NLP.pdb
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\obj\Debug\netcoreapp1.1\Watson_NLP.csproj.CoreCompileInputs.cache
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\obj\Debug\netcoreapp1.1\Watson_NLP.AssemblyInfo.cs
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\obj\Debug\netcoreapp1.1\Watson_NLP.dll
+c:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\obj\Debug\netcoreapp1.1\Watson_NLP.pdb
+C:\Users\win7\Desktop\Pruebas de concepto\Watson_NETCore_NLP\Watson_NLP\obj\Debug\netcoreapp1.1\Watson_NLP.csprojResolveAssemblyReference.cache
